@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: debug
+set -x
+
 #
 # Validate input file
 #
@@ -62,12 +65,22 @@ while IFS= read -r url; do
         continue
     fi
 
-    # TODO: Create repo on WACS
-    # TODO: Clone repo locally
-    # TODO: Push repo to WACS
-    # TODO: Cleanup
+    # Create repo on WACS
+    echo "Creating empty repo at ${GITEA_URL}/${TARGET_REPO} ..."
+    gitea new ${TARGET_REPO}
 
-    # TODO: Remove to test loop
+    # Create temp dir
+    local_repo_dir=$(mktemp -d -t repo-XXXXXX)
+
+    # TODO: Clone repo locally
+    git clone --mirror --bare ${url} ${local_repo_dir}
+
+    # TODO: Push repo to WACS
+
+    # Cleanup temp dir
+    rm -rf ${local_repo_dir}
+
+    # TODO: debug
     break
 
 done < "$INPUT_FILE"
