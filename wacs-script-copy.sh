@@ -61,7 +61,7 @@ while IFS= read -r url; do
     TARGET_REPO="${TARGET_USER}/${repo}"
     if gitea exists "${TARGET_USER}/${repo}"
     then
-        echo "WARNING: target repo already exists: ${TARGET_USER}/${repo}"
+        echo "WARNING: target repo already exists, skipping: ${TARGET_USER}/${repo}"
         continue
     fi
 
@@ -72,15 +72,15 @@ while IFS= read -r url; do
     # Create temp dir
     local_repo_dir=$(mktemp -d -t repo-XXXXXX)
 
-    # TODO: Clone repo locally
+    # Clone repo locally
     git clone --mirror --bare ${url} ${local_repo_dir}
 
-    # TODO: Push repo to WACS
+    # Push repo to WACS
+    cd ${local_repo_dir}
+    git remote set-url origin git@content.bibletranslationtools.org:${TARGET_REPO}.git
+    git push
 
     # Cleanup temp dir
     rm -rf ${local_repo_dir}
-
-    # TODO: debug
-    break
 
 done < "$INPUT_FILE"
