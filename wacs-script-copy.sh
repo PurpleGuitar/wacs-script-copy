@@ -34,3 +34,18 @@ then
     echo "Download from https://github.com/bashup/gitea-cli"
     exit 1
 fi
+
+#
+# Read repos from file and create them in WACS
+#
+REPO_REGEX="^https://([^/]+)/([^/]+)/([^/]+)$"
+while IFS= read -r url; do
+    if [[ ! ${url} =~ ${REPO_REGEX} ]]; then
+        echo "WARNING: Line didn't look like a repo URL: ${url}"
+        continue
+    fi
+    server="${BASH_REMATCH[1]}"
+    user="${BASH_REMATCH[2]}"
+    repo="${BASH_REMATCH[3]}"
+    echo ${server} ${user} ${repo}
+done < "$INPUT_FILE"
