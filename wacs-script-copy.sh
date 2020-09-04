@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# TODO: debug
-set -x
+#
+# Abort on any error
+#
+set -o errexit
 
 #
 # Validate input file
@@ -65,8 +67,10 @@ while IFS= read -r url; do
         continue
     fi
 
+    # Let's go!
+    echo "Copying ${url} to ${GIT_URL}/${TARGET_REPO}..."
+
     # Create repo on WACS
-    echo "Creating empty repo at ${GITEA_URL}/${TARGET_REPO} ..."
     gitea new ${TARGET_REPO}
 
     # Create temp dir
