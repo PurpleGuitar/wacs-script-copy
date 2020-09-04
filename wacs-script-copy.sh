@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Make sure file was given
+#
+# Validate input file
+#
 if [ -z "${1}" ]; then
     echo "Usage: ${0} input_filename"
     echo "Reads input file containing repo URLs and copies them to WACS/Staging"
@@ -12,7 +14,9 @@ if [ ! -f "${INPUT_FILE}" ]; then
     exit 1
 fi
 
+#
 # Make sure environment variables are set
+#
 REQUIRED_ENV_VARS=(GITEA_API_TOKEN GITEA_URL GITEA_USER)
 for env_var in ${REQUIRED_ENV_VARS[@]}; do
     if [ -z "${!env_var}" ]; then
@@ -21,4 +25,12 @@ for env_var in ${REQUIRED_ENV_VARS[@]}; do
     fi
 done
 
-
+#
+# Make sure gitea-cli exists
+#
+if ! command -v gitea &> /dev/null
+then
+    echo "ERROR: gitea binary not found in path."
+    echo "Download from https://github.com/bashup/gitea-cli"
+    exit 1
+fi
