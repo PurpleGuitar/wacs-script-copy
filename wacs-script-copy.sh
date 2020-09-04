@@ -38,8 +38,14 @@ fi
 #
 # Read repos from file and create them in WACS
 #
+TARGET_USER="Staging"
 REPO_REGEX="^https://([^/]+)/([^/]+)/([^/]+)$"
 while IFS= read -r url; do
+
+    # Clean up whitespace
+    url="${url//[[:space:]]/}"
+
+    # Get repo details
     if [[ ! ${url} =~ ${REPO_REGEX} ]]; then
         echo "WARNING: Line didn't look like a repo URL: ${url}"
         continue
@@ -47,5 +53,21 @@ while IFS= read -r url; do
     server="${BASH_REMATCH[1]}"
     user="${BASH_REMATCH[2]}"
     repo="${BASH_REMATCH[3]}"
-    echo ${server} ${user} ${repo}
+
+    # Check if repo already exists
+    TARGET_REPO="${TARGET_USER}/${repo}"
+    if gitea exists "${TARGET_USER}/${repo}"
+    then
+        echo "WARNING: target repo already exists: ${TARGET_USER}/${repo}"
+        continue
+    fi
+
+    # TODO: Create repo on WACS
+    # TODO: Clone repo locally
+    # TODO: Push repo to WACS
+    # TODO: Cleanup
+
+    # TODO: Remove to test loop
+    break
+
 done < "$INPUT_FILE"
