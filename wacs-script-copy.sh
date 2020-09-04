@@ -6,6 +6,11 @@ if [ -z "${1}" ]; then
     echo "Reads input file containing repo URLs and copies them to WACS/Staging"
     exit 1
 fi
+INPUT_FILE=${1}
+if [ ! -f "${INPUT_FILE}" ]; then
+    echo "ERROR: input file doesn't exist: ${INPUT_FILE}"
+    exit 1
+fi
 
 # Make sure environment variables are set
 REQUIRED_ENV_VARS=(GITEA_API_TOKEN GITEA_URL GITEA_USER)
@@ -15,4 +20,5 @@ for env_var in ${REQUIRED_ENV_VARS[@]}; do
         exit 1
     fi
 done
+
 
