@@ -6,6 +6,11 @@
 set -o errexit
 
 #
+# Remember working directory
+#
+CWD=$(pwd)
+
+#
 # Validate input file
 #
 if [ -z "${1}" ]; then
@@ -68,7 +73,7 @@ while IFS= read -r url; do
     fi
 
     # Let's go!
-    echo "Copying ${url} to ${GIT_URL}/${TARGET_REPO}..."
+    echo "Copying ${url} to ${GITEA_URL}/${TARGET_REPO}..."
 
     # Create repo on WACS
     gitea new ${TARGET_REPO}
@@ -86,5 +91,6 @@ while IFS= read -r url; do
 
     # Cleanup temp dir
     rm -rf ${local_repo_dir}
+    cd ${CWD}
 
 done < "$INPUT_FILE"
