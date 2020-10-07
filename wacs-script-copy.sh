@@ -3,7 +3,7 @@
 #
 # Abort on any error
 #
-set -o errexit
+set -x
 
 #
 # Remember working directory
@@ -68,21 +68,34 @@ while IFS= read -r url; do
     TARGET_REPO="${TARGET_USER}/${repo}"
     if gitea exists "${TARGET_USER}/${repo}"
     then
+        # TODO Make this a parameter maybe?
+
+        # Skip
         echo "WARNING: target repo already exists, skipping: ${TARGET_USER}/${repo}"
         continue
+
+        # Delete
+        # gitea delete ${TARGET_REPO}
     fi
 
+    # Check source repo
+    curl ${url} | grep 'Page Not Found'
+    if [ $? == 0 ]; then
+        echo "Repo not found: ${url}"
+        exit 1
+    fi
+    
     # Let's go!
     echo "Copying ${url} to ${GITEA_URL}/${TARGET_REPO}..."
-
-    # Create repo on WACS
-    gitea new ${TARGET_REPO}
 
     # Create temp dir
     local_repo_dir=$(mktemp -d -t repo-XXXXXX)
 
     # Clone repo locally
     git clone --mirror --bare ${url} ${local_repo_dir}
+
+    # Create repo on WACS
+    gitea new ${TARGET_REPO}
 
     # Push repo to WACS
     cd ${local_repo_dir}
